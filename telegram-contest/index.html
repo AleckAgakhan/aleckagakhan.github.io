@@ -16,10 +16,8 @@
 		<chart-loader id="chart-loader" chart-key="chart-root" url="chart_data.json">
 			<template>
 				<div id="chart-root">
-					<chart-context style="display: flex; align-items: center">
+					<chart-context style="display: flex; flex-direction: column; align-items: center">
 						<div style="display: inline-flex; flex-direction: column; align-items: center; margin: 20px;">
-							<chart-line-selector checkbox-key="checkbox" style="display: flex; justify-content: space-evenly; user-select: none;"></chart-line-selector>
-							<canvas-chart-range-selector style='display: inline-block; width: 500px; height: 100px;'></canvas-chart-range-selector>
 							<canvas-chart-view
 								point-tooltip-templatekey="ChartViewPointTooltip"
 								point-info-templatekey="ChartViewPointInfo"
@@ -28,9 +26,6 @@
 							<canvas-chart-range-selector style='display: inline-block; width: 500px; height: 100px;'></canvas-chart-range-selector>
 							<chart-line-selector checkbox-key="checkbox" style="display: flex; justify-content: space-evenly; user-select: none;"></chart-line-selector>
 							<chart-theme-switch style="display: flex; justify-content: space-evenly; user-select: none;"></chart-theme-switch>
-						</div>
-						<div style="display: inline-flex; flex-direction: column; align-items: left; margin: 20px;">
-							<input-chart-range-selector content-key="InputChartRangeSelector" item-key="InputChartRangeItem" style="user-select: none;"></input-chart-range-selector>
 						</div>
 					</chart-context>
 				</div>

@@ -32,7 +32,6 @@ define(["require", "exports", "./ChartModel", "./ChartTheme", "./common", "./Cha
             this.isPointToolTipUpdated = false;
             this.theme = ChartTheme_1.getCurrentTheme();
             const canvas = document.createElement('canvas');
-            canvas.style.border = 'solid black 1px';
             canvas.style.width = '100%';
             canvas.style.height = '100%';
             this.element.shadowRoot.append(canvas);
