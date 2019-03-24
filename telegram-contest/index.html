@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+		<title>Telegram contest</title>
+		<link rel="icon" type="image/png" href="">
+		<style>
+			chart-loader { display: block; }
+		</style>
+		<script src="js/index" type="module"></script>
+	</head>
+	<body>
+		<h1>Telegram contest</h1>
+		<chart-loader id="chart-loader" chart-key="chart-root" url="chart_data.json">
+			<template>
+				<div id="chart-root">
+					<chart-context style="display: flex; align-items: center">
+						<div style="display: inline-flex; flex-direction: column; align-items: center; margin: 20px;">
+							<chart-line-selector checkbox-key="checkbox" style="display: flex; justify-content: space-evenly; user-select: none;"></chart-line-selector>
+							<canvas-chart-range-selector style='display: inline-block; width: 500px; height: 100px;'></canvas-chart-range-selector>
+							<canvas-chart-view
+								point-tooltip-templatekey="ChartViewPointTooltip"
+								point-info-templatekey="ChartViewPointInfo"
+								style='display: inline-block; width: 500px; height: 500px;'
+							></canvas-chart-view>
+							<canvas-chart-range-selector style='display: inline-block; width: 500px; height: 100px;'></canvas-chart-range-selector>
+							<chart-line-selector checkbox-key="checkbox" style="display: flex; justify-content: space-evenly; user-select: none;"></chart-line-selector>
+							<chart-theme-switch style="display: flex; justify-content: space-evenly; user-select: none;"></chart-theme-switch>
+						</div>
+						<div style="display: inline-flex; flex-direction: column; align-items: left; margin: 20px;">
+							<input-chart-range-selector content-key="InputChartRangeSelector" item-key="InputChartRangeItem" style="user-select: none;"></input-chart-range-selector>
+						</div>
+					</chart-context>
+				</div>
+
+				<template id="InputChartRangeSelector" >
+					<div style="display: grid; grid-template-columns: auto auto; grid-gap: 5px 1ch;">
+						<label for="RangeStart" style="grid-column: 1; grid-row: 1;">Start:</label>
+						<input type="number" step="0.1" id="RangeStart" style="grid-column: 2; grid-row: 1;"/>
+						<label for="RangeEnd" style="grid-column: 1; grid-row: 2;">End:</label>
+						<input type="number" step="0.1" id="RangeEnd" style="grid-column: 2; grid-row: 2;"/>
+						<button id="RangeApply" style="grid-column: 1 / span 2; grid-row: 3; justify-self: center;">
+							Apply
+						</button>
+					</div>
+					<div id="RangeItemContainer" style="margin-top: 5px"></div>
+				</template>
+
+				<template id="InputChartRangeItem">
+					<div>
+						<button id="ApplyRange" style="display: inline-block;"></button>
+						<button id="RemoveRange">&#x274C;</button>
+					</div>
+				</template>
+
+				<template id="ChartViewPointTooltip">
+					<div
+						class="theme-borderWidth theme-borderColor theme-backgroundColor"
+						style="border-style: solid; border-radius: 8px; text-align: center; padding: 5px;"
+					>
+						<div id="DateContainer" class="theme-textColor" style="text-align: center"></div>
+						<div id="PointTooltipContainer" style="display: flex; justify-content: space-around;"></div>
+					</div>
+				</template>
+				<template id="ChartViewPointInfo">
+					<div style="display: inline-flex; flex-direction: column; align-items: center; padding: 5px;">
+						<div id="PointValue"></div>
+						<div id="LineName"></div>
+					</div>
+				</template>
+
+				<themable-checkbox id="checkbox"
+					icon-key="CheckboxIcon"
+					label-key="CheckboxLabel"
+					class="theme-borderWidth theme-borderColor"
+					style="display: inline-flex; align-items: center; border-style: solid; border-radius: 17px; padding: 4px 8px; margin: 8px;"
+				>
+				</themable-checkbox>
+
+				<svg id="CheckboxIcon" viewBox="-10 -10 20 20" style="display: inline-block; width: 20px; height: 20px;">
+					<circle class="LineColorFill" cx="0" cy="0" r="10" />
+					<circle cx="0" cy="0" fill="white">
+						<animate attributeType="XML" attributeName="r" from="8" to="0" dur="0.2" begin="CheckboxIcon.Check+0.3s" fill="freeze"/>
+						<animate attributeType="XML" attributeName="r" from="0" to="8" dur="0.2" begin="CheckboxIcon.Uncheck+0.3s" fill="freeze"/>
+						<set attributeType="XML" attributeName="r" to="0" begin="CheckboxIcon.InitCheck" fill="freeze"/>
+						<set attributeType="XML" attributeName="r" to="8" begin="CheckboxIcon.InitUncheck" fill="freeze"/>
+					</circle>
+					<polyline points="-4,-1 -1,4 5,-5" stroke="white" stroke-width="2" fill="none">
+						<animate attributeType="XML" attributeName="points" from="-1,4 -1,4 -1,4" to="-4,-1 -1,4 5,-5" dur="0.6" begin="CheckboxIcon.Check" fill="freeze"/>
+						<animate attributeType="XML" attributeName="points" from="-4,-1 -1,4 5,-5" to="-1,4 -1,4 -1,4" dur="0.4" begin="CheckboxIcon.Uncheck" fill="freeze"/>
+						<set attributeType="XML" attributeName="points" to="-4,-1 -1,4 5,-5" begin="CheckboxIcon.InitCheck" fill="freeze"/>
+						<set attributeType="XML" attributeName="points" to="" begin="CheckboxIcon.InitUncheck" fill="freeze"/>
+					</polyline>
+				</svg>
+
+				<span id="CheckboxLabel" style="display: inline-block; margin-left: 1ch;"></span>
+			</template>
+		</chart-loader>
+	</body>
+</html>
