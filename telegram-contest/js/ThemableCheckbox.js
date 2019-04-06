@@ -1,33 +1,58 @@
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __values = (this && this.__values) || function (o) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator], i = 0;
+    if (m) return m.call(o);
+    return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+};
 define(["require", "exports", "./common", "./TemplateProvider"], function (require, exports, common_1, TemplateProvider_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.boolValueChangeHandlerKey = Symbol('BoolValue::ChangeHandler');
-    class ThemableCheckbox extends HTMLElement {
-        constructor() {
-            super();
-            this._value = false;
-            this.subscribers = new Set();
-            this.onclick = this.handleClick.bind(this);
+    var ThemableCheckbox = (function (_super) {
+        __extends(ThemableCheckbox, _super);
+        function ThemableCheckbox() {
+            var _this = _super.call(this) || this;
+            _this._value = false;
+            _this.subscribers = new Set();
+            _this.onclick = _this.handleClick.bind(_this);
+            return _this;
         }
-        getRequiredAttribute(name) {
-            const value = this.getAttribute(name);
+        ThemableCheckbox.prototype.getRequiredAttribute = function (name) {
+            var value = this.getAttribute(name);
             if (!value)
                 throw new Error(common_1.missingAttrMsg(exports.TagName, name));
             return value;
-        }
-        connectedCallback() {
-            const shadowRoot = this.attachShadow({ mode: 'open' });
+        };
+        ThemableCheckbox.prototype.connectedCallback = function () {
+            var shadowRoot = this.attachShadow({ mode: 'open' });
             this.getRequiredAttribute("key");
-            const mainColor = this.getRequiredAttribute("main-color");
-            const styleElement = document.createElement('style');
+            var mainColor = this.getRequiredAttribute("main-color");
+            var styleElement = document.createElement('style');
             shadowRoot.appendChild(styleElement);
-            const styleSheet = styleElement.sheet;
-            styleSheet.insertRule(`.LineColorFill { fill: ${mainColor} }`);
-            const templateProvider = TemplateProvider_1.getTemplateProvider(this);
+            var styleSheet = styleElement.sheet;
+            styleSheet.insertRule(".LineColorFill { fill: " + mainColor + " }");
+            var templateProvider = TemplateProvider_1.getTemplateProvider(this);
             if (!templateProvider)
                 throw new Error(common_1.missingTemplateProviderMsg(exports.TagName));
-            const iconKey = this.getRequiredAttribute("icon-key");
-            const icon = templateProvider.createElementWithId(iconKey);
+            var iconKey = this.getRequiredAttribute("icon-key");
+            var icon = templateProvider.createElementWithId(iconKey);
             shadowRoot.appendChild(icon);
             this.icon = icon;
             if (this.hasAttribute("default-checked"))
@@ -36,54 +61,70 @@ define(["require", "exports", "./common", "./TemplateProvider"], function (requi
                 this.initChecked();
             else
                 this.initUnchecked();
-            const labelKey = this.getRequiredAttribute("label-key");
-            const label = templateProvider.createElement(labelKey);
+            var labelKey = this.getRequiredAttribute("label-key");
+            var label = templateProvider.createElement(labelKey);
             shadowRoot.appendChild(label);
-            const labelId = this.getAttribute("label-id");
-            const labelElement = labelId ? shadowRoot.getElementById(labelId) : label;
+            var labelId = this.getAttribute("label-id");
+            var labelElement = labelId ? shadowRoot.getElementById(labelId) : label;
             if (!labelElement)
-                throw new Error(common_1.missionTemplateElementMsg(exports.TagName, "label-id", labelId));
+                throw new Error(common_1.missingTemplateElementMsg(exports.TagName, "label-id", labelId));
             labelElement.textContent = this.getAttribute("label-text");
-        }
-        get value() { return this._value; }
-        set value(value) {
-            if (value === this._value)
-                return;
-            this._value = value;
-            const key = this.getRequiredAttribute("key");
-            for (const subscriber of this.subscribers) {
-                if (exports.boolValueChangeHandlerKey in subscriber)
-                    subscriber[exports.boolValueChangeHandlerKey](value, key);
+        };
+        Object.defineProperty(ThemableCheckbox.prototype, "value", {
+            get: function () { return this._value; },
+            set: function (value) {
+                var e_1, _a;
+                if (value === this._value)
+                    return;
+                this._value = value;
+                var key = this.getRequiredAttribute("key");
+                try {
+                    for (var _b = __values(this.subscribers), _c = _b.next(); !_c.done; _c = _b.next()) {
+                        var subscriber = _c.value;
+                        if (exports.boolValueChangeHandlerKey in subscriber)
+                            subscriber[exports.boolValueChangeHandlerKey](value, key);
+                        else
+                            subscriber(value, key);
+                    }
+                }
+                catch (e_1_1) { e_1 = { error: e_1_1 }; }
+                finally {
+                    try {
+                        if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+                    }
+                    finally { if (e_1) throw e_1.error; }
+                }
+                if (value)
+                    this.animateToChecked();
                 else
-                    subscriber(value, key);
-            }
-            if (value)
-                this.animateToChecked();
-            else
-                this.animateToUnchecked();
-        }
-        subscribe(subscriber) {
+                    this.animateToUnchecked();
+            },
+            enumerable: true,
+            configurable: true
+        });
+        ThemableCheckbox.prototype.subscribe = function (subscriber) {
             this.subscribers.add(subscriber);
-        }
-        unsubscribe(subscriber) {
+        };
+        ThemableCheckbox.prototype.unsubscribe = function (subscriber) {
             this.subscribers.delete(subscriber);
-        }
-        handleClick() {
+        };
+        ThemableCheckbox.prototype.handleClick = function () {
             this.value = !this._value;
-        }
-        animateToChecked() {
+        };
+        ThemableCheckbox.prototype.animateToChecked = function () {
             this.icon.dispatchEvent(new Event('Check'));
-        }
-        animateToUnchecked() {
+        };
+        ThemableCheckbox.prototype.animateToUnchecked = function () {
             this.icon.dispatchEvent(new Event('Uncheck'));
-        }
-        initChecked() {
+        };
+        ThemableCheckbox.prototype.initChecked = function () {
             this.icon.dispatchEvent(new Event('InitCheck'));
-        }
-        initUnchecked() {
+        };
+        ThemableCheckbox.prototype.initUnchecked = function () {
             this.icon.dispatchEvent(new Event('InitUncheck'));
-        }
-    }
+        };
+        return ThemableCheckbox;
+    }(HTMLElement));
     exports.ThemableCheckbox = ThemableCheckbox;
     exports.TagName = 'themable-checkbox';
     customElements.define(exports.TagName, ThemableCheckbox);

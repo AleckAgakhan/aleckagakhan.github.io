@@ -1,55 +1,100 @@
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __values = (this && this.__values) || function (o) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator], i = 0;
+    if (m) return m.call(o);
+    return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+};
 define(["require", "exports", "./common"], function (require, exports, common_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.chartContextChangeHandlerKey = Symbol('ChartContext::ChangeHandler');
-    class ChartContextElement extends HTMLElement {
-        constructor() {
-            super();
-            this.subscribers = new Set();
+    var ChartContextElement = (function (_super) {
+        __extends(ChartContextElement, _super);
+        function ChartContextElement() {
+            var _this = _super.call(this) || this;
+            _this.subscribers = new Set();
+            return _this;
         }
-        get chartModel() { return this._chartModel; }
+        Object.defineProperty(ChartContextElement.prototype, "chartModel", {
+            get: function () { return this._chartModel; },
+            set: function (value) {
+                var e_1, _a;
+                this._chartModel = value;
+                try {
+                    for (var _b = __values(this.subscribers), _c = _b.next(); !_c.done; _c = _b.next()) {
+                        var subscriber = _c.value;
+                        if (exports.chartContextChangeHandlerKey in subscriber)
+                            subscriber[exports.chartContextChangeHandlerKey](this);
+                        else
+                            subscriber(this);
+                    }
+                }
+                catch (e_1_1) { e_1 = { error: e_1_1 }; }
+                finally {
+                    try {
+                        if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+                    }
+                    finally { if (e_1) throw e_1.error; }
+                }
+            },
+            enumerable: true,
+            configurable: true
+        });
         ;
-        set chartModel(value) {
-            this._chartModel = value;
-            for (const subscriber of this.subscribers) {
-                if (exports.chartContextChangeHandlerKey in subscriber)
-                    subscriber[exports.chartContextChangeHandlerKey](this);
-                else
-                    subscriber(this);
-            }
-        }
-        subscribe(subscriber) {
+        ChartContextElement.prototype.subscribe = function (subscriber) {
             this.subscribers.add(subscriber);
-        }
-        unsubscribe(subscriber) {
+        };
+        ChartContextElement.prototype.unsubscribe = function (subscriber) {
             this.subscribers.delete(subscriber);
-        }
-    }
+        };
+        return ChartContextElement;
+    }(HTMLElement));
     exports.ChartContextElement = ChartContextElement;
     exports.TagName = 'chart-context';
     customElements.define(exports.TagName, ChartContextElement);
-    class ChartContextConsumerElement extends HTMLElement {
-        connectedCallback() {
-            const chartContext = this.findContextElement();
+    var ChartContextConsumerElement = (function (_super) {
+        __extends(ChartContextConsumerElement, _super);
+        function ChartContextConsumerElement() {
+            return _super !== null && _super.apply(this, arguments) || this;
+        }
+        ChartContextConsumerElement.prototype.connectedCallback = function () {
+            var chartContext = this.findContextElement();
             chartContext.subscribe(this);
             this[exports.chartContextChangeHandlerKey](chartContext);
-        }
-        disconnectedCallback() {
-            const chartContext = this.chartContext;
+        };
+        ChartContextConsumerElement.prototype.disconnectedCallback = function () {
+            var chartContext = this.chartContext;
             if (chartContext) {
                 chartContext.unsubscribe(this);
                 this.chartContext = undefined;
             }
-            const controller = this.controller;
+            var controller = this.controller;
             if (controller) {
                 controller.disconnect();
                 this.controller = undefined;
             }
-        }
-        [exports.chartContextChangeHandlerKey](chartContext) {
-            let controller = this.controller;
+        };
+        ChartContextConsumerElement.prototype[exports.chartContextChangeHandlerKey] = function (chartContext) {
+            var controller = this.controller;
             if (!controller) {
-                const model = chartContext.chartModel;
+                var model = chartContext.chartModel;
                 if (!model)
                     return;
                 controller = this.createController(model);
@@ -57,22 +102,23 @@ define(["require", "exports", "./common"], function (require, exports, common_1)
             }
             else
                 controller.model = chartContext.chartModel;
-        }
-        findContextElement() {
-            const body = document.body;
-            for (let parent = this.parentElement; parent != null && parent !== body; parent = parent.parentElement) {
-                if (parent.localName === exports.TagName)
-                    return parent;
+        };
+        ChartContextConsumerElement.prototype.findContextElement = function () {
+            var body = document.body;
+            for (var parent_1 = this.parentElement; parent_1 != null && parent_1 !== body; parent_1 = parent_1.parentElement) {
+                if (parent_1.localName === exports.TagName)
+                    return parent_1;
             }
-            throw new Error(`Invalid chart context: The element <${this.localName}> may only be placed as a discendent of <${exports.TagName}>.`);
-        }
-        getRequiredAttribute(name) {
-            const value = this.getAttribute(name);
+            throw new Error("Invalid chart context: The element <" + this.localName + "> may only be placed as a discendent of <" + exports.TagName + ">.");
+        };
+        ChartContextConsumerElement.prototype.getRequiredAttribute = function (name) {
+            var value = this.getAttribute(name);
             if (!value)
                 throw new Error(common_1.missingAttrMsg(this.localName, name));
             return value;
-        }
-    }
+        };
+        return ChartContextConsumerElement;
+    }(HTMLElement));
     exports.ChartContextConsumerElement = ChartContextConsumerElement;
 });
 //# sourceMappingURL=ChartContext.js.map

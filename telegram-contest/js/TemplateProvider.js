@@ -1,10 +1,23 @@
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 define(["require", "exports", "./common"], function (require, exports, common_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.getTemplateProvider = (element) => {
+    exports.getTemplateProvider = function (element) {
         if (element instanceof TemplateProviderElement)
             return element;
-        let current = element;
+        var current = element;
         while (true) {
             current = element.getRootNode();
             if (!(current instanceof ShadowRoot))
@@ -14,42 +27,47 @@ define(["require", "exports", "./common"], function (require, exports, common_1)
                 return current;
         }
     };
-    class TemplateProviderElement extends HTMLElement {
-        createElement(templateKey) {
-            const newElement = this.createElementWithId(templateKey);
+    var TemplateProviderElement = (function (_super) {
+        __extends(TemplateProviderElement, _super);
+        function TemplateProviderElement() {
+            return _super !== null && _super.apply(this, arguments) || this;
+        }
+        TemplateProviderElement.prototype.createElement = function (templateKey) {
+            var newElement = this.createElementWithId(templateKey);
             newElement.removeAttribute('id');
             return newElement;
-        }
-        createElementWithId(templateKey) {
-            const template = this.templateMap.content.getElementById(templateKey);
+        };
+        TemplateProviderElement.prototype.createElementWithId = function (templateKey) {
+            var template = this.templateMap.content.getElementById(templateKey);
             if (!template)
-                throw new Error(`Unable to find the template with the key '${templateKey}'.`);
-            const newElement = template.cloneNode(true);
+                throw new Error("Unable to find the template with the key '" + templateKey + "'.");
+            var newElement = template.cloneNode(true);
             return newElement;
-        }
-        createElementFromTemplate(templateKey) {
-            const template = this.templateMap.content.getElementById(templateKey);
+        };
+        TemplateProviderElement.prototype.createElementFromTemplate = function (templateKey) {
+            var template = this.templateMap.content.getElementById(templateKey);
             if (!template)
-                throw new Error(`Unable to find the template with the key '${templateKey}'.`);
-            const newElement = template.content.cloneNode(true);
+                throw new Error("Unable to find the template with the key '" + templateKey + "'.");
+            var newElement = template.content.cloneNode(true);
             return newElement;
-        }
-        connectedCallback() {
+        };
+        TemplateProviderElement.prototype.connectedCallback = function () {
             this.setTemplateMapElement();
-        }
-        setTemplateMapElement() {
-            const templateMap = this.firstElementChild;
+        };
+        TemplateProviderElement.prototype.setTemplateMapElement = function () {
+            var templateMap = this.firstElementChild;
             if (!(templateMap instanceof HTMLTemplateElement))
-                throw new Error(`Provide template map as the first child or override the method setTemplateElement().`);
+                throw new Error("Provide template map as the first child or override the method setTemplateElement().");
             this.templateMap = templateMap;
-        }
-        getRequiredAttribute(name) {
-            const value = this.getAttribute(name);
+        };
+        TemplateProviderElement.prototype.getRequiredAttribute = function (name) {
+            var value = this.getAttribute(name);
             if (!value)
                 throw new Error(common_1.missingAttrMsg(this.localName, name));
             return value;
-        }
-    }
+        };
+        return TemplateProviderElement;
+    }(HTMLElement));
     exports.TemplateProviderElement = TemplateProviderElement;
 });
 //# sourceMappingURL=TemplateProvider.js.map
